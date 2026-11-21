@@ -1,0 +1,1541 @@
+/* ==========================================================================
+   WITCH'S ALCHEMY - ATMOSPHERIC STYLES
+   Theme: Cozy Dark Gothic Witchcraft / Arcane Occult Tabletop
+   ========================================================================== */
+
+:root {
+  --bg-deep: #09060d;
+  --bg-room: #120b18;
+  --table-wood-base: #1e130c;
+  --table-wood-grain: #140c07;
+  --shelf-wood: #2a1a11;
+  --brass-gold: #c99e52;
+  --brass-bright: #e7bf78;
+  --runic-glow: #a855f7;
+  --flame-warmth: #ff9838;
+  --flame-core: #fff6bd;
+  --parchment-light: #edd8b4;
+  --parchment-dark: #caa778;
+  --parchment-border: #4d3822;
+  --blood-accent: #7f1d1d;
+  --text-arcane: #d6c7b2;
+  --text-muted: #8c7b6d;
+  
+  /* Dynamic lighting driven by candles: 0 lit = 0.15, 1 = 0.45, 2 = 0.75, 3 = 1.0 */
+  --candle-light-factor: 0.18;
+  --candle-glow-radius: 120px;
+  --candle-warmth-opacity: 0.25;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: 'Cinzel', 'Cormorant Garamond', 'Georgia', serif;
+  background-color: var(--bg-deep);
+  color: var(--text-arcane);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Subtle background vignette & ambient room darkness */
+.chamber-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: 
+    radial-gradient(circle at 80% 65%, rgba(255, 140, 40, calc(var(--candle-light-factor) * 0.45)) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(20, 10, 30, 0.6) 0%, rgba(5, 3, 8, 0.95) 85%),
+    radial-gradient(ellipse at 50% 20%, rgba(45, 20, 60, 0.35) 0%, transparent 60%);
+  transition: background 0.8s ease;
+}
+
+/* Atmospheric particle canvas */
+#ambient-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   HEADER & CONTROLS
+   ========================================================================== */
+.header-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(8, 4, 12, 0.85) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(201, 158, 82, 0.15);
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--brass-gold);
+  filter: drop-shadow(0 0 8px rgba(201, 158, 82, 0.5));
+}
+
+.title-group h1 {
+  font-size: 1.45rem;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: var(--brass-bright);
+  text-shadow: 0 0 12px rgba(201, 158, 82, 0.4), 0 2px 4px #000;
+}
+
+.title-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-left: 8px;
+}
+
+.action-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  background: rgba(30, 20, 35, 0.8);
+  border: 1px solid rgba(201, 158, 82, 0.3);
+  color: var(--brass-bright);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.btn-icon:hover {
+  background: rgba(50, 30, 60, 0.9);
+  border-color: var(--brass-gold);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(201, 158, 82, 0.4);
+}
+
+.btn-ritual {
+  background: linear-gradient(135deg, rgba(45, 25, 40, 0.9), rgba(25, 12, 20, 0.9));
+  border: 1px solid rgba(201, 158, 82, 0.4);
+  color: var(--brass-bright);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+.btn-ritual:hover {
+  background: linear-gradient(135deg, rgba(70, 35, 60, 0.95), rgba(40, 20, 35, 0.95));
+  border-color: var(--brass-bright);
+  box-shadow: 0 0 16px rgba(201, 158, 82, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   APP WORKSPACE CONTAINER
+   ========================================================================== */
+.main-workspace {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+/* ==========================================================================
+   INGREDIENT SHELVES (TOP)
+   ========================================================================== */
+.shelves-container {
+  background: linear-gradient(180deg, rgba(22, 14, 18, 0.75) 0%, rgba(14, 8, 12, 0.85) 100%);
+  border: 1px solid rgba(100, 70, 50, 0.4);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 
+    inset 0 1px 3px rgba(255, 255, 255, 0.05),
+    0 10px 25px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: visible;
+}
+
+.shelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed rgba(201, 158, 82, 0.2);
+  padding-bottom: 6px;
+}
+
+.shelf-title {
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  color: var(--brass-gold);
+  text-transform: uppercase;
+}
+
+.shelf-tip {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.shelves-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shelf-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  padding-bottom: 14px;
+}
+
+/* Wooden shelf ledge under each row */
+.shelf-ledge {
+  position: absolute;
+  bottom: 0;
+  left: -8px;
+  right: -8px;
+  height: 10px;
+  background: linear-gradient(180deg, #3d2417 0%, #20120b 60%, #110905 100%);
+  border-top: 1px solid rgba(201, 158, 82, 0.35);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 220, 160, 0.15);
+}
+
+/* Ingredient Item on Shelf */
+.ingredient-slot-shelf {
+  position: relative;
+  height: 96px;
+  background: radial-gradient(circle at 50% 30%, rgba(45, 30, 40, 0.4) 0%, rgba(15, 10, 18, 0.7) 100%);
+  border: 1px solid rgba(201, 158, 82, 0.15);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 6px 4px 4px;
+  z-index: 2;
+}
+
+.ingredient-slot-shelf:hover {
+  border-color: rgba(201, 158, 82, 0.6);
+  background: radial-gradient(circle at 50% 30%, rgba(65, 40, 55, 0.6) 0%, rgba(20, 12, 25, 0.8) 100%);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6), 0 0 12px rgba(201, 158, 82, 0.25);
+}
+
+.ingredient-slot-shelf:active {
+  cursor: grabbing;
+}
+
+.ingredient-slot-shelf.is-placed {
+  opacity: 0.25;
+  filter: grayscale(80%);
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.ingredient-slot-shelf.is-placed:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(201, 158, 82, 0.15);
+}
+
+.ingredient-icon-wrapper {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.8));
+  transition: transform 0.2s ease;
+}
+
+.ingredient-slot-shelf:hover .ingredient-icon-wrapper {
+  transform: scale(1.08);
+}
+
+.ingredient-label {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-arcane);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 95%;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px #000;
+}
+
+/* Tooltip on hover */
+.ingredient-slot-shelf::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(14, 8, 18, 0.95);
+  border: 1px solid var(--brass-gold);
+  color: var(--brass-bright);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.5px;
+}
+
+.ingredient-slot-shelf:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   ALTAR TABLE & MAIN INTERACTIVE STAGE
+   Left: Grimoire | Center: Witch Star Altar | Right: Candles & Matchbox
+   ========================================================================== */
+.table-stage {
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(45, 25, 20, 0.9) 0%, rgba(20, 11, 8, 0.98) 75%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  border: 3px solid #2e1a12;
+  border-radius: 18px;
+  padding: 24px;
+  min-height: 520px;
+  display: grid;
+  grid-template-columns: 340px 1fr 270px;
+  gap: 20px;
+  align-items: center;
+  box-shadow: 
+    inset 0 0 80px rgba(0, 0, 0, 0.9),
+    0 15px 35px rgba(0, 0, 0, 0.85);
+  overflow: visible;
+  transition: box-shadow 0.6s ease;
+}
+
+/* Dynamic warm candlelight wash over tabletop */
+.table-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(circle at 88% 65%, rgba(255, 160, 60, calc(var(--candle-light-factor) * 0.35)) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.6s ease;
+}
+
+/* ==========================================================================
+   LEFT: THE GRIMOIRE (SPELLBOOK)
+   ========================================================================== */
+.grimoire-wrapper {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grimoire-book {
+  width: 100%;
+  max-width: 335px;
+  height: 440px;
+  background: #231510;
+  border-radius: 10px;
+  box-shadow: 
+    -12px 14px 25px rgba(0, 0, 0, 0.9),
+    inset -2px 0 6px rgba(0, 0, 0, 0.7);
+  position: relative;
+  border: 3px solid #4a2818;
+  display: flex;
+  perspective: 1200px;
+  overflow: visible;
+}
+
+/* Aged leather binding & gold leaf corners */
+.grimoire-book::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 20px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #180d09 0%, #3d2013 50%, #150a06 100%);
+  box-shadow: inset 0 0 8px #000;
+  z-index: 5;
+}
+
+/* Grimoire corner brass protectors */
+.grimoire-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--brass-gold);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0.75;
+}
+.grimoire-corner.tl { top: 4px; left: 4px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+.grimoire-corner.tr { top: 4px; right: 4px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+.grimoire-corner.bl { bottom: 4px; left: 4px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+.grimoire-corner.br { bottom: 4px; right: 4px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+
+.grimoire-pages {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  gap: 6px;
+}
+
+.grimoire-page {
+  flex: 1;
+  background: 
+    radial-gradient(circle at 50% 50%, #f3e6ca 0%, #e2cb9f 75%, #caa671 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  border-radius: 4px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: inset 0 0 14px rgba(60, 40, 20, 0.5);
+  position: relative;
+  overflow: hidden;
+  color: #2b1709;
+}
+
+.grimoire-page-left {
+  border-right: 1px solid rgba(80, 50, 30, 0.4);
+}
+
+.grimoire-page-right {
+  border-left: 1px solid rgba(80, 50, 30, 0.4);
+}
+
+.grimoire-page-content {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: #2a1506;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.grimoire-page-content h3 {
+  font-family: 'Cinzel', 'Cormorant Garamond', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  color: #5a1509;
+  border-bottom: 1.5px solid #8c4c23;
+  padding-bottom: 4px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.grimoire-recipe-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.grimoire-recipe-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(90, 21, 9, 0.12);
+  color: #5a1509;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(90, 21, 9, 0.25);
+  letter-spacing: 0.5px;
+}
+
+.grimoire-ingredient-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #5a1e12;
+  margin-top: 4px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.grimoire-ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 3px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5px;
+}
+
+.grimoire-ingredient-list li {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #261204;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.25;
+}
+
+.grimoire-ingredient-list li::before {
+  content: '✦';
+  font-size: 0.65rem;
+  color: #8c3f1d;
+  flex-shrink: 0;
+}
+
+.grimoire-rule-box {
+  background: rgba(140, 76, 35, 0.1);
+  border: 1px dashed rgba(120, 60, 20, 0.4);
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin-top: auto;
+  font-size: 0.74rem;
+  line-height: 1.3;
+  color: #4a210b;
+}
+
+.grimoire-rule-box strong {
+  color: #6d1b0d;
+}
+
+.grimoire-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2px 0;
+  opacity: 0.9;
+}
+
+.grimoire-illustration svg {
+  max-width: 65px;
+  max-height: 65px;
+  filter: sepia(0.8) hue-rotate(-20deg) contrast(1.2);
+}
+
+.grimoire-body,
+.grimoire-gibberish {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  color: #3b2210;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.grimoire-controls {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-page {
+  background: rgba(35, 20, 16, 0.85);
+  border: 1px solid var(--brass-gold);
+  color: var(--brass-bright);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: rgba(60, 35, 25, 0.95);
+  box-shadow: 0 0 8px rgba(201, 158, 82, 0.4);
+}
+
+.btn-page:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: #555;
+}
+
+.page-indicator {
+  font-size: 0.72rem;
+  color: var(--brass-gold);
+}
+
+/* ==========================================================================
+   CENTER: THE WITCH'S ALTAR TABLE & STAR
+   ========================================================================== */
+.altar-center {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.witch-star-container {
+  position: relative;
+  width: 440px;
+  height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The Witch's Knot SVG Base on Table */
+.witch-star-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.9));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Engraved stone ring around the star */
+.altar-stone-ring {
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  border-radius: 50%;
+  border: 2px dashed rgba(201, 158, 82, 0.35);
+  box-shadow: 
+    inset 0 0 25px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(168, 85, 247, 0.15);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The 5 Ritual Slots (Top, Right, Bottom, Left, Center) */
+.ritual-slot {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(25, 15, 30, 0.85) 0%, rgba(10, 5, 15, 0.95) 100%);
+  border: 2px solid rgba(201, 158, 82, 0.4);
+  box-shadow: 
+    0 0 14px rgba(0, 0, 0, 0.9),
+    inset 0 0 10px rgba(168, 85, 247, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ritual-slot:hover {
+  border-color: var(--brass-bright);
+  box-shadow: 
+    0 0 20px rgba(168, 85, 247, 0.6),
+    inset 0 0 15px rgba(201, 158, 82, 0.4);
+  transform: scale(1.08);
+}
+
+.ritual-slot.drag-over {
+  border-color: #facc15;
+  background: radial-gradient(circle, rgba(60, 30, 80, 0.9) 0%, rgba(20, 10, 30, 0.95) 100%);
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.8), inset 0 0 20px rgba(250, 204, 21, 0.5);
+  transform: scale(1.15);
+}
+
+.ritual-slot.is-filled {
+  border-color: rgba(201, 158, 82, 0.8);
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.5), inset 0 0 12px rgba(201, 158, 82, 0.3);
+}
+
+/* Slot Coordinates based on Witch's Knot geometry */
+/* Slot 0: Top / North point of knot */
+.ritual-slot[data-slot-index="0"] {
+  top: 24px;
+  left: calc(50% - 36px);
+}
+
+/* Slot 1: Right / East point of knot */
+.ritual-slot[data-slot-index="1"] {
+  top: calc(50% - 36px);
+  right: 24px;
+}
+
+/* Slot 2: Bottom / South point of knot */
+.ritual-slot[data-slot-index="2"] {
+  bottom: 24px;
+  left: calc(50% - 36px);
+}
+
+/* Slot 3: Left / West point of knot */
+.ritual-slot[data-slot-index="3"] {
+  top: calc(50% - 36px);
+  left: 24px;
+}
+
+/* Slot 4: Center diamond aperture of knot */
+.ritual-slot[data-slot-index="4"] {
+  top: calc(50% - 36px);
+  left: calc(50% - 36px);
+  width: 76px;
+  height: 76px;
+  border-width: 2.5px;
+  border-color: rgba(201, 158, 82, 0.6);
+  box-shadow: 0 0 20px rgba(201, 158, 82, 0.35);
+}
+
+/* Rune placeholder inside empty slot */
+.slot-placeholder-rune {
+  font-size: 1.25rem;
+  color: rgba(201, 158, 82, 0.45);
+  font-weight: 300;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.ritual-slot:hover .slot-placeholder-rune {
+  color: var(--brass-bright);
+  transform: rotate(45deg);
+}
+
+/* Placed item inside slot */
+.placed-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.placed-item-icon {
+  width: 52px;
+  height: 52px;
+  filter: drop-shadow(0 0 8px rgba(201, 158, 82, 0.6));
+}
+
+.placed-item-remove-hint {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  background: var(--blood-accent);
+  border: 1px solid var(--brass-gold);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.ritual-slot:hover .placed-item-remove-hint {
+  opacity: 1;
+}
+
+/* Altar Action Buttons below the star */
+.altar-actions {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-clear-altar {
+  background: rgba(30, 15, 20, 0.8);
+  border: 1px solid rgba(201, 158, 82, 0.35);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  padding: 6px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-altar:hover {
+  background: rgba(60, 25, 30, 0.9);
+  color: var(--brass-bright);
+  border-color: var(--brass-gold);
+  box-shadow: 0 0 10px rgba(201, 158, 82, 0.3);
+}
+
+.altar-status-text {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--brass-gold);
+  font-style: italic;
+  min-height: 20px;
+  text-shadow: 0 1px 3px #000;
+}
+
+/* ==========================================================================
+   RIGHT: 3 CANDLES & INTERACTIVE MATCHSTICK
+   ========================================================================== */
+.candles-stage-wrapper {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.candles-cluster {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  height: 250px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+/* Candle Holders & Bases */
+.candle-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.candle-holder-base {
+  width: 44px;
+  height: 12px;
+  background: linear-gradient(180deg, #5c4323 0%, #302111 60%, #170f07 100%);
+  border-top: 1px solid var(--brass-gold);
+  border-radius: 6px 6px 3px 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Candle Bodies */
+.candle-wax {
+  position: relative;
+  border-radius: 4px 4px 1px 1px;
+  box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.6), inset 3px 0 6px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Left candle: Burgundy / Crimson */
+.candle-unit[data-candle-id="1"] .candle-wax {
+  width: 28px;
+  height: 130px;
+  background: linear-gradient(90deg, #380a0a 0%, #701c1c 45%, #420d0d 100%);
+}
+
+/* Middle candle: Tall Antique Bone / Ivory with drips */
+.candle-unit[data-candle-id="2"] .candle-wax {
+  width: 32px;
+  height: 175px;
+  background: linear-gradient(90deg, #7c7263 0%, #d8cdba 40%, #857a6b 100%);
+}
+
+/* Right candle: Thick Obsidian Black / Deep Charcoal */
+.candle-unit[data-candle-id="3"] .candle-wax {
+  width: 34px;
+  height: 105px;
+  background: linear-gradient(90deg, #121018 0%, #2e2638 45%, #15121c 100%);
+}
+
+/* Wax drips on top edge */
+.wax-drips {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  pointer-events: none;
+}
+
+/* Wick */
+.candle-wick {
+  width: 3px;
+  height: 14px;
+  background: #111;
+  border-radius: 1px;
+  margin-bottom: -2px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Flame Container & Realistic Flame Anatomy */
+.candle-flame-container {
+  position: absolute;
+  top: -46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 48px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 4;
+}
+
+.candle-unit.is-lit .candle-flame-container {
+  opacity: 1;
+}
+
+.candle-flame-outer {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 38px;
+  background: radial-gradient(ellipse at 50% 80%, rgba(255, 90, 0, 0.9) 0%, rgba(255, 180, 40, 0.8) 50%, transparent 80%);
+  border-radius: 50% 50% 35% 35% / 70% 70% 30% 30%;
+  filter: blur(1px);
+}
+
+.candle-flame-inner {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 24px;
+  background: radial-gradient(ellipse at 50% 80%, #ffffff 0%, #ffee77 40%, #ff8800 85%);
+  border-radius: 50% 50% 35% 35% / 75% 75% 25% 25%;
+}
+
+.candle-flame-blue {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  filter: blur(1.5px);
+  opacity: 0.85;
+}
+
+/* Radial warm glow halo around lit candle */
+.candle-light-halo {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255, 170, 50, 0.4) 0%, rgba(255, 100, 20, 0.15) 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.candle-unit.is-lit .candle-light-halo {
+  opacity: 1;
+}
+
+/* Smoke puff on extinguish */
+.candle-smoke-puff {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 40px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Matchbox & Matchstick Section */
+.matchbox-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 5;
+}
+
+.matchbox {
+  width: 120px;
+  height: 64px;
+  background: linear-gradient(135deg, #422818 0%, #2b180d 100%);
+  border: 2px solid var(--brass-gold);
+  border-radius: 6px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.8);
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.matchbox:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.9), 0 0 10px rgba(201, 158, 82, 0.3);
+}
+
+.matchbox-label {
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  color: var(--brass-bright);
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+  border: 1px dashed rgba(201, 158, 82, 0.4);
+  padding: 4px 8px;
+}
+
+/* Striking strip on side of matchbox */
+.matchbox-strip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(45deg, #1a0f08, #1a0f08 2px, #3a2212 2px, #3a2212 4px);
+  border-top: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Matchstick */
+.matchstick {
+  width: 90px;
+  height: 12px;
+  position: relative;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  transition: transform 0.15s ease;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.8));
+}
+
+.matchstick:active {
+  cursor: grabbing;
+}
+
+.matchstick-wood {
+  width: 76px;
+  height: 6px;
+  background: linear-gradient(180deg, #d2b079 0%, #a6844c 100%);
+  border-radius: 2px;
+}
+
+.matchstick-head {
+  width: 14px;
+  height: 10px;
+  background: radial-gradient(circle at 40% 40%, #ff4b4b 0%, #8b0000 80%);
+  border-radius: 5px 3px 3px 5px;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.matchstick-flame {
+  position: absolute;
+  left: -14px;
+  top: -16px;
+  width: 22px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.matchstick.is-lit .matchstick-flame {
+  opacity: 1;
+}
+
+.matchstick-instruction {
+  font-size: 0.68rem;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+  max-width: 160px;
+}
+
+/* ==========================================================================
+   SPELL RESULT MODALS & OVERLAYS
+   ========================================================================== */
+.spell-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 8, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 20px;
+}
+
+.spell-modal-backdrop.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spell-modal-content {
+  position: relative;
+  max-width: 580px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: scale(0.85) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spell-modal-backdrop.is-active .spell-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+/* Close button on modal */
+.btn-close-modal {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1d0f1a;
+  border: 2px solid var(--brass-gold);
+  color: var(--brass-bright);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.btn-close-modal:hover {
+  background: #3d1b32;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 15px var(--brass-gold);
+}
+
+/* Spell Outcome 1: Aşık Etme Büyüsü - Ancient Glowing Parchment */
+.parchment-scroll-container {
+  background: 
+    radial-gradient(circle at 50% 50%, #fbf5e6 0%, #edd8b4 70%, #d8ba8b 100%);
+  border: 4px double #5a3818;
+  border-radius: 12px;
+  padding: 40px 32px;
+  box-shadow: 
+    0 0 40px rgba(255, 180, 80, 0.4),
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(100, 60, 20, 0.2);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  max-width: 520px;
+  width: 100%;
+}
+
+.parchment-scroll-container::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed #7a4e28;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.parchment-sigil-top {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  color: #7b2c1d;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.parchment-spell-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 1.15rem;
+  color: #5c2010;
+  margin-bottom: 14px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(120, 60, 20, 0.3);
+  padding-bottom: 8px;
+}
+
+.parchment-exact-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #2e1606;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+  margin: 18px 0;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.parchment-footer-note {
+  font-size: 0.85rem;
+  color: #6b4324;
+  font-style: italic;
+  margin-top: 14px;
+  letter-spacing: 1px;
+}
+
+/* Spell Outcome 2: Yaren Büyüsü - Expressive Side-Eye */
+.side-eye-stage {
+  background: radial-gradient(circle at 50% 50%, #201224 0%, #0d0710 100%);
+  border: 2px solid var(--brass-gold);
+  border-radius: 16px;
+  padding: 36px 30px;
+  box-shadow: 0 0 35px rgba(168, 85, 247, 0.4), 0 20px 40px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.side-eye-title {
+  font-size: 1.25rem;
+  letter-spacing: 3px;
+  color: var(--brass-bright);
+}
+
+.side-eye-face {
+  position: relative;
+  width: 320px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.eye-socket {
+  position: relative;
+  width: 110px;
+  height: 60px;
+  background: #fdfaf2;
+  border-radius: 60% 40% 60% 40% / 70% 50% 50% 30%;
+  border: 3px solid #1f1224;
+  box-shadow: 
+    inset 0 3px 8px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.eye-socket.right {
+  border-radius: 40% 60% 40% 60% / 50% 70% 30% 50%;
+}
+
+.eyeball-iris {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #5b21b6 0%, #2e1065 70%, #0f0524 100%);
+  border: 2px solid #17092e;
+}
+
+.eyeball-pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  background: #000;
+  border-radius: 50%;
+}
+
+.eyeball-glint {
+  position: absolute;
+  top: 25%;
+  left: 30%;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #fff;
+}
+
+/* Eyebrows for sassy expression */
+.eyebrow {
+  position: absolute;
+  top: 14px;
+  width: 70px;
+  height: 6px;
+  background: #3b1b42;
+  border-radius: 4px;
+}
+.eyebrow.left { left: 45px; transform: rotate(-8deg); }
+.eyebrow.right { right: 45px; transform: rotate(18deg) translateY(-8px); }
+
+.side-eye-caption {
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  color: #c084fc;
+  font-style: italic;
+}
+
+/* Spell Outcome 3: Ruh Görme Büyüsü - Note over glowing Heart */
+.soul-vision-stage {
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, #24131d 0%, #0d070c 100%);
+  border: 2px solid var(--brass-gold);
+  border-radius: 16px;
+  padding: 36px 28px;
+  box-shadow: 0 0 40px rgba(244, 63, 94, 0.35), 0 20px 40px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.soul-heart-bg {
+  width: 130px;
+  height: 130px;
+  margin-bottom: 18px;
+  color: #e11d48;
+  filter: drop-shadow(0 0 22px rgba(244, 63, 94, 0.7));
+}
+
+.soul-note-card {
+  background: linear-gradient(135deg, rgba(245, 235, 215, 0.95), rgba(225, 205, 175, 0.95));
+  border: 2px solid #5a3818;
+  border-radius: 8px;
+  padding: 24px 22px;
+  color: #2d1607;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  max-width: 460px;
+}
+
+.soul-exact-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: 0.4px;
+}
+
+/* Spell Outcome 4: Özlem Görme Büyüsü - Envelope over Heart */
+.longing-vision-stage {
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, #1e1329 0%, #0b0711 100%);
+  border: 2px solid var(--brass-gold);
+  border-radius: 16px;
+  padding: 36px 28px;
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.35), 0 20px 40px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.longing-heart-bg {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 14px;
+  color: #a855f7;
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.6));
+}
+
+.envelope-wrapper {
+  position: relative;
+  width: 320px;
+  height: 200px;
+  perspective: 800px;
+}
+
+.envelope-body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: #fdfaf2;
+  border: 2px solid #caa778;
+  border-radius: 6px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+  overflow: visible;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: #f1ebd8;
+  border-bottom: 2px solid #caa778;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
+  transition: transform 0.6s ease;
+  z-index: 5;
+}
+
+.envelope-wrapper.is-open .envelope-flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.envelope-letter {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 10px;
+  background: #fff;
+  border: 1px solid #d4c2a5;
+  border-radius: 4px;
+  padding: 18px 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 3;
+}
+
+.envelope-wrapper.is-open .envelope-letter {
+  transform: translateY(-50px);
+}
+
+.longing-exact-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #3b1b42;
+  letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (TABLETS & MOBILE)
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .table-stage {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 20px 14px;
+  }
+  
+  .grimoire-wrapper {
+    order: 2;
+  }
+  
+  .altar-center {
+    order: 1;
+  }
+  
+  .candles-stage-wrapper {
+    order: 3;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+  }
+  
+  .shelf-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .header-bar {
+    padding: 10px 14px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .shelf-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .witch-star-container {
+    width: 320px;
+    height: 320px;
+  }
+  
+  .altar-stone-ring {
+    width: 310px;
+    height: 310px;
+  }
+  
+  .ritual-slot {
+    width: 58px;
+    height: 58px;
+  }
+  
+  .ritual-slot[data-slot-index="0"] { top: 12px; left: calc(50% - 29px); }
+  .ritual-slot[data-slot-index="1"] { top: calc(50% - 29px); right: 12px; }
+  .ritual-slot[data-slot-index="2"] { bottom: 12px; left: calc(50% - 29px); }
+  .ritual-slot[data-slot-index="3"] { top: calc(50% - 29px); left: 12px; }
+  .ritual-slot[data-slot-index="4"] { top: calc(50% - 29px); left: calc(50% - 29px); width: 62px; height: 62px; }
+  
+  .placed-item-icon {
+    width: 40px;
+    height: 40px;
+  }
+}

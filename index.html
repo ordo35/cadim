@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadının Simya Masası ✦ Kişiye Özel Büyü Masası</title>
+
+  <!-- Google Fonts: Arcane & Gothic Witch Typography with Full Turkish (latin-ext) Support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=MedievalSharp&subset=latin,latin-ext&display=swap" rel="stylesheet">
+
+  <!-- Modular Stylesheets (Supports both root level and css/ subfolder) -->
+  <link rel="stylesheet" href="style.css" onerror="this.onerror=null;this.href='css/style.css';">
+  <link rel="stylesheet" href="animations.css" onerror="this.onerror=null;this.href='css/animations.css';">
+</head>
+<body>
+
+  <!-- Ambient Dynamic Room Atmosphere & Particles Canvas -->
+  <div class="chamber-background"></div>
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Top Navigation & Controls Bar -->
+  <header class="header-bar">
+    <div class="title-group">
+      <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+      </svg>
+      <div>
+        <h1>CADININ SİMYA MASASI</h1>
+      </div>
+      <span class="title-subtitle">✦ Kadim Ritüel ve Tılsımlar</span>
+    </div>
+
+    <div class="action-controls">
+      <button class="btn-ritual" id="btn-quick-light" onclick="window.candleSystem.igniteAll()" title="Tüm mumları tek seferde yak">
+        <span>🔥</span>
+        <span>Alevleri Çağır</span>
+      </button>
+      <button class="btn-icon" id="btn-toggle-sound" title="Sesi Kapat / Aç">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Witch Altar Workspace -->
+  <main class="main-workspace">
+
+    <!-- TOP: 2 STACKED INGREDIENT SHELVES (12 Items) -->
+    <section class="shelves-container" aria-label="Malzeme Rafları">
+      <div class="shelf-header">
+        <span class="shelf-title">✦ Ritüel Malzemeleri Dolabı</span>
+        <span class="shelf-tip">Malzemeleri yıldıza sürükle veya seçip yuvaya dokun</span>
+      </div>
+
+      <div class="shelves-grid">
+        <!-- Shelf 1 (Items 1 - 6) -->
+        <div class="shelf-row" id="shelf-row-1">
+          <!-- Dynamically populated from js/alchemy.js & data.js -->
+          <div class="shelf-ledge"></div>
+        </div>
+
+        <!-- Shelf 2 (Items 7 - 12) -->
+        <div class="shelf-row" id="shelf-row-2">
+          <!-- Dynamically populated from js/alchemy.js & data.js -->
+          <div class="shelf-ledge"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER TABLE STAGE: Grimoire (Left), Witch Star (Center), Candles (Right) -->
+    <section class="table-stage" id="table-stage">
+
+      <!-- LEFT SIDE: THE GRIMOIRE (SPELLBOOK) -->
+      <div class="grimoire-wrapper">
+        <div class="grimoire-book" id="grimoire-book">
+          <div class="grimoire-corner tl"></div>
+          <div class="grimoire-corner tr"></div>
+          <div class="grimoire-corner bl"></div>
+          <div class="grimoire-corner br"></div>
+
+          <div class="grimoire-pages">
+            <!-- Left Page -->
+            <div class="grimoire-page grimoire-page-left" id="grimoire-page-left">
+              <!-- Rendered via js/main.js -->
+            </div>
+            <!-- Right Page -->
+            <div class="grimoire-page grimoire-page-right" id="grimoire-page-right">
+              <!-- Rendered via js/main.js -->
+            </div>
+          </div>
+        </div>
+
+        <div class="grimoire-controls">
+          <button class="btn-page" id="btn-grimoire-prev" disabled>◀ Önceki</button>
+          <span class="page-indicator" id="grimoire-page-indicator">Sayfa I & II</span>
+          <button class="btn-page" id="btn-grimoire-next">Sonraki ▶</button>
+        </div>
+      </div>
+
+      <!-- CENTER: THE WITCH'S ALTAR & WITCH'S STAR (Based on witchstar.jpg) -->
+      <div class="altar-center">
+        <div class="witch-star-container" id="witch-star-board">
+          
+          <!-- Outer Engraved Stone Ring -->
+          <div class="altar-stone-ring" id="altar-stone-ring"></div>
+
+          <!-- Custom SVG Witch's Knot (closely inspired by witchstar.jpg) -->
+          <svg class="witch-star-svg" viewBox="0 0 400 400">
+            <defs>
+              <radialGradient id="starMetalGrad" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#4a3622"/>
+                <stop offset="60%" stop-color="#23180f"/>
+                <stop offset="100%" stop-color="#120c08"/>
+              </radialGradient>
+              <linearGradient id="goldRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="40%" stop-color="#d97706"/>
+                <stop offset="80%" stop-color="#b45309"/>
+                <stop offset="100%" stop-color="#fde047"/>
+              </linearGradient>
+              <filter id="knotShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.85"/>
+              </filter>
+            </defs>
+
+            <!-- Outer Medallion Border (Matching witchstar.jpg pendant circle) -->
+            <circle cx="200" cy="200" r="186" fill="url(#starMetalGrad)" stroke="#c99e52" stroke-width="3" filter="url(#knotShadow)"/>
+            <circle cx="200" cy="200" r="176" fill="none" stroke="#e7bf78" stroke-width="1.2" stroke-dasharray="6,4"/>
+            <circle cx="200" cy="200" r="168" fill="none" stroke="#784e24" stroke-width="1.8"/>
+
+            <!-- Runic Inscriptions on Outer Rim -->
+            <g font-family="'Cinzel Decorative', serif" font-size="9" fill="#c99e52" opacity="0.65" text-anchor="middle">
+              <text x="200" y="28">ᛟ ᚱ ᚢ ᚺ ✦ ᚲ ᚐ ᛞ ᛖ ᚱ ✦ ᚷ ᚑ ᛉ</text>
+              <text x="374" y="204" transform="rotate(90 374 204)">✦ ᛖ ᚲ ᛖ ᛗ ✦ ᛖ ᛗ ᛁ ᚱ ✦</text>
+              <text x="200" y="380">✦ 🜂 🜄 🜁 🜃 ✦ ᛗ ᚢ ᚺ ᚢ ᚱ ✦</text>
+              <text x="26" y="204" transform="rotate(-90 26 204)">✦ ᛟ ᛉ ᛚ ᛖ ᛗ ✦ ᚣ ᚐ ᚱ ᛖ ᚾ ✦</text>
+            </g>
+
+            <!-- The Witch's Knot Geometry (4 Pointed Petal Loops + Interlaced Ring) -->
+            <g stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linejoin="round" opacity="0.95">
+              
+              <!-- Concentric Intersecting Ring passing through the 4 lobes -->
+              <circle cx="200" cy="200" r="110" stroke="url(#goldRibbon)" stroke-width="10"/>
+              <circle cx="200" cy="200" r="110" stroke="#120c08" stroke-width="2"/>
+
+              <!-- 4 Pointed Oval Loops (North, East, South, West) -->
+              <!-- North Loop -->
+              <path d="M 200 200 C 135 125, 140 45, 200 28 C 260 45, 265 125, 200 200 Z" 
+                    fill="#150e0a" stroke="url(#goldRibbon)" stroke-width="9"/>
+              <!-- South Loop -->
+              <path d="M 200 200 C 135 275, 140 355, 200 372 C 260 355, 265 275, 200 200 Z" 
+                    fill="#150e0a" stroke="url(#goldRibbon)" stroke-width="9"/>
+              <!-- East Loop -->
+              <path d="M 200 200 C 275 135, 355 140, 372 200 C 355 260, 275 265, 200 200 Z" 
+                    fill="#150e0a" stroke="url(#goldRibbon)" stroke-width="9"/>
+              <!-- West Loop -->
+              <path d="M 200 200 C 125 135, 45 140, 28 200 C 45 260, 125 265, 200 200 Z" 
+                    fill="#150e0a" stroke="url(#goldRibbon)" stroke-width="9"/>
+
+              <!-- Inner loop contours & highlights matching witchstar.jpg -->
+              <path d="M 200 180 C 155 125, 158 65, 200 48 C 242 65, 245 125, 200 180 Z" stroke="#e7bf78" stroke-width="1.8"/>
+              <path d="M 200 220 C 155 275, 158 335, 200 352 C 242 335, 245 275, 200 220 Z" stroke="#e7bf78" stroke-width="1.8"/>
+              <path d="M 220 200 C 275 155, 335 158, 352 200 C 335 242, 275 245, 220 200 Z" stroke="#e7bf78" stroke-width="1.8"/>
+              <path d="M 180 200 C 125 155, 65 158, 48 200 C 65 242, 125 245, 180 200 Z" stroke="#e7bf78" stroke-width="1.8"/>
+
+              <!-- Central Diamond / Square Opening -->
+              <rect x="189" y="189" width="22" height="22" transform="rotate(45 200 200)" 
+                    fill="#0a0504" stroke="#fde047" stroke-width="2"/>
+              <circle cx="200" cy="200" r="3" fill="#fde047"/>
+            </g>
+          </svg>
+
+          <!-- 5 INTERACTIVE RITUAL SLOTS (4 Outer Points + 1 Center) -->
+          <!-- Slot 0: Top (North Point) -->
+          <div class="ritual-slot" data-slot-index="0" title="Kuzey Yuvası (Boş)">
+            <span class="slot-placeholder-rune">ᛟ</span>
+          </div>
+
+          <!-- Slot 1: Right (East Point) -->
+          <div class="ritual-slot" data-slot-index="1" title="Doğu Yuvası (Boş)">
+            <span class="slot-placeholder-rune">ᚱ</span>
+          </div>
+
+          <!-- Slot 2: Bottom (South Point) -->
+          <div class="ritual-slot" data-slot-index="2" title="Güney Yuvası (Boş)">
+            <span class="slot-placeholder-rune">ᚲ</span>
+          </div>
+
+          <!-- Slot 3: Left (West Point) -->
+          <div class="ritual-slot" data-slot-index="3" title="Batı Yuvası (Boş)">
+            <span class="slot-placeholder-rune">ᚷ</span>
+          </div>
+
+          <!-- Slot 4: Exact Center (Diamond Center) -->
+          <div class="ritual-slot" data-slot-index="4" title="Merkez Yuvası (Boş)">
+            <span class="slot-placeholder-rune">✦</span>
+          </div>
+
+        </div>
+
+        <!-- Altar Action Bar below the star -->
+        <div class="altar-actions">
+          <button class="btn-clear-altar" id="btn-clear-altar">
+            <span>↺</span>
+            <span>Sunak Temizle</span>
+          </button>
+          <div class="altar-status-text" id="altar-status-text">
+            Ritüel malzemelerini yıldıza yerleştir...
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: 3 CANDLES & MATCHSTICK -->
+      <div class="candles-stage-wrapper">
+        <div class="candles-cluster" id="candles-cluster">
+          
+          <!-- Candle 1: Left (Crimson Burgundy) -->
+          <div class="candle-unit" data-candle-id="1" title="Mumu yakmak / söndürmek için tıkla">
+            <div class="candle-light-halo"></div>
+            <div class="candle-flame-container">
+              <div class="candle-flame-outer"></div>
+              <div class="candle-flame-inner"></div>
+              <div class="candle-flame-blue"></div>
+            </div>
+            <div class="candle-smoke-puff"></div>
+            <div class="candle-wick"></div>
+            <div class="candle-wax"></div>
+            <div class="candle-holder-base"></div>
+          </div>
+
+          <!-- Candle 2: Middle (Tall Ivory Bone with Drips) -->
+          <div class="candle-unit" data-candle-id="2" title="Mumu yakmak / söndürmek için tıkla">
+            <div class="candle-light-halo"></div>
+            <div class="candle-flame-container">
+              <div class="candle-flame-outer"></div>
+              <div class="candle-flame-inner"></div>
+              <div class="candle-flame-blue"></div>
+            </div>
+            <div class="candle-smoke-puff"></div>
+            <div class="candle-wick"></div>
+            <div class="candle-wax"></div>
+            <div class="candle-holder-base"></div>
+          </div>
+
+          <!-- Candle 3: Right (Obsidian Black) -->
+          <div class="candle-unit" data-candle-id="3" title="Mumu yakmak / söndürmek için tıkla">
+            <div class="candle-light-halo"></div>
+            <div class="candle-flame-container">
+              <div class="candle-flame-outer"></div>
+              <div class="candle-flame-inner"></div>
+              <div class="candle-flame-blue"></div>
+            </div>
+            <div class="candle-smoke-puff"></div>
+            <div class="candle-wick"></div>
+            <div class="candle-wax"></div>
+            <div class="candle-holder-base"></div>
+          </div>
+
+        </div>
+
+        <!-- Interactive Matchbox and Matchstick Area -->
+        <div class="matchbox-area">
+          <div class="matchbox" id="interactive-matchbox" title="Kibriti yakmak için kutuya tıkla">
+            <div class="matchbox-label">KİBRİT KUTUSU</div>
+            <div class="matchbox-strip"></div>
+          </div>
+
+          <div class="matchstick" id="interactive-matchstick" title="Kibriti tut ve yak!">
+            <div class="matchstick-flame">
+              <svg viewBox="0 0 20 30" width="100%" height="100%">
+                <path d="M10 2 C16 10, 18 20, 10 28 C2 20, 4 10, 10 2 Z" fill="url(#matchFlameGrad)"/>
+                <defs>
+                  <radialGradient id="matchFlameGrad" cx="50%" cy="60%" r="50%">
+                    <stop offset="0%" stop-color="#fffb8f"/>
+                    <stop offset="50%" stop-color="#ff7300"/>
+                    <stop offset="100%" stop-color="#b91c1c"/>
+                  </radialGradient>
+                </defs>
+              </svg>
+            </div>
+            <div class="matchstick-head"></div>
+            <div class="matchstick-wood"></div>
+          </div>
+
+          <div class="matchstick-instruction" id="match-hint">
+            Kibriti yakmak için kutuya veya kibrite tıkla
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- SPELL RESULT MODAL OVERLAY -->
+  <div class="spell-modal-backdrop" id="spell-result-modal" role="dialog" aria-modal="true">
+    <div class="spell-modal-content">
+      <button class="btn-close-modal" id="btn-close-spell-modal" title="Kapat">✕</button>
+      <div id="spell-modal-content-area">
+        <!-- Rendered dynamically by js/alchemy.js based on spell combination -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Scripts in Order of Dependency (Supports both root level and js/ subfolder) -->
+  <script>
+    (function() {
+      const scripts = ["data.js", "audio.js", "candles.js", "alchemy.js", "main.js"];
+      let idx = 0;
+      function loadNext() {
+        if (idx >= scripts.length) return;
+        const file = scripts[idx];
+        const s = document.createElement("script");
+        s.src = file;
+        s.onload = function() {
+          idx++;
+          loadNext();
+        };
+        s.onerror = function() {
+          // Fallback to js/ subfolder if file is not in root
+          const fb = document.createElement("script");
+          fb.src = "js/" + file;
+          fb.onload = function() {
+            idx++;
+            loadNext();
+          };
+          fb.onerror = function() {
+            console.error("Ritüel betiği yüklenemedi: " + file);
+          };
+          document.body.appendChild(fb);
+        };
+        document.body.appendChild(s);
+      }
+      loadNext();
+    })();
+  </script>
+
+</body>
+</html>

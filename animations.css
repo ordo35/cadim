@@ -1,0 +1,318 @@
+/* ==========================================================================
+   WITCH'S ALCHEMY - ATMOSPHERIC ANIMATIONS & EFFECTS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Candle Flame Flickering & Glow Pulsing
+   -------------------------------------------------------------------------- */
+@keyframes flameFlicker {
+  0% {
+    transform: translateX(-50%) scale(1) rotate(-1deg);
+    opacity: 0.95;
+  }
+  20% {
+    transform: translateX(-51%) scale(1.04, 0.96) rotate(1.5deg);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-49%) scale(0.96, 1.05) rotate(-2deg);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateX(-52%) scale(1.02, 0.98) rotate(1deg);
+    opacity: 0.98;
+  }
+  80% {
+    transform: translateX(-48%) scale(0.98, 1.02) rotate(-0.5deg);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translateX(-50%) scale(1) rotate(-1deg);
+    opacity: 0.95;
+  }
+}
+
+.candle-unit.is-lit .candle-flame-outer {
+  animation: flameFlicker 1.8s infinite ease-in-out;
+}
+
+.candle-unit[data-candle-id="2"].is-lit .candle-flame-outer {
+  animation-duration: 2.1s;
+  animation-delay: 0.3s;
+}
+
+.candle-unit[data-candle-id="3"].is-lit .candle-flame-outer {
+  animation-duration: 1.5s;
+  animation-delay: 0.6s;
+}
+
+@keyframes innerFlameFlicker {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-49%) scale(1.08, 0.92); }
+}
+
+.candle-unit.is-lit .candle-flame-inner {
+  animation: innerFlameFlicker 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes haloPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+  50% { transform: translateX(-50%) scale(1.08); opacity: 0.9; }
+}
+
+.candle-unit.is-lit .candle-light-halo {
+  animation: haloPulse 3s infinite alternate ease-in-out;
+}
+
+/* Extinguish Smoke Puff */
+@keyframes smokeRise {
+  0% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(-45%) translateY(-25px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-55%) translateY(-50px) scale(2);
+  }
+}
+
+.smoke-puff-active {
+  animation: smokeRise 1.2s forwards cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Witch Star & Altar Magic Energy Animations
+   -------------------------------------------------------------------------- */
+@keyframes runeGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+    opacity: 0.85;
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(201, 158, 82, 0.8)) drop-shadow(0 0 25px rgba(168, 85, 247, 0.7));
+    opacity: 1;
+  }
+}
+
+.witch-star-svg {
+  animation: runeGlowPulse 4s infinite alternate ease-in-out;
+}
+
+@keyframes stoneRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.altar-stone-ring.is-channeling {
+  animation: stoneRingRotate 30s infinite linear;
+}
+
+/* Slot Energy Pulse */
+@keyframes slotPulse {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(168, 85, 247, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(168, 85, 247, 0.65), inset 0 0 15px rgba(201, 158, 82, 0.5);
+  }
+}
+
+.ritual-slot {
+  animation: slotPulse 3s infinite alternate ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Item Placement & Removal
+   -------------------------------------------------------------------------- */
+@keyframes popIn {
+  0% {
+    transform: scale(0.2) rotate(-15deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.18) rotate(5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.placed-item {
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), levitate 3s infinite ease-in-out 0.4s;
+}
+
+/* --------------------------------------------------------------------------
+   Spell Outcome 2: Expressive SIDE-EYE Animation
+   Suspicious look -> Eyeballs glide to side -> Eyebrow arch -> Sassy blink
+   -------------------------------------------------------------------------- */
+@keyframes expressiveSideEye {
+  0%, 12% {
+    transform: translate(-50%, -50%); /* Look straight */
+  }
+  20%, 25% {
+    transform: translate(-30%, -50%); /* Glance starts shifting */
+  }
+  35%, 75% {
+    transform: translate(12%, -50%); /* Dramatic full SIDE-EYE! */
+  }
+  85%, 100% {
+    transform: translate(-50%, -50%); /* Settle back */
+  }
+}
+
+.side-eye-stage.animate-side-eye .eyeball-iris {
+  animation: expressiveSideEye 3.6s infinite ease-in-out;
+}
+
+@keyframes eyebrowAttitude {
+  0%, 12% {
+    transform: rotate(18deg) translateY(-8px);
+  }
+  30%, 75% {
+    transform: rotate(26deg) translateY(-14px); /* Arch high in disbelief */
+  }
+  85%, 100% {
+    transform: rotate(18deg) translateY(-8px);
+  }
+}
+
+.side-eye-stage.animate-side-eye .eyebrow.right {
+  animation: eyebrowAttitude 3.6s infinite ease-in-out;
+}
+
+@keyframes eyelidSquint {
+  0%, 15% {
+    height: 60px;
+  }
+  25%, 70% {
+    height: 48px; /* Sassy squint */
+  }
+  78% {
+    height: 4px; /* Quick sassy blink */
+  }
+  85%, 100% {
+    height: 60px;
+  }
+}
+
+.side-eye-stage.animate-side-eye .eye-socket {
+  animation: eyelidSquint 3.6s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Heart Pulsing for Soul Vision & Longing Vision
+   -------------------------------------------------------------------------- */
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 18px rgba(244, 63, 94, 0.6));
+  }
+  15% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 28px rgba(244, 63, 94, 0.9));
+  }
+  30% {
+    transform: scale(1.02);
+  }
+  45% {
+    transform: scale(1.16);
+    filter: drop-shadow(0 0 32px rgba(244, 63, 94, 1));
+  }
+  60% {
+    transform: scale(1);
+  }
+}
+
+.soul-heart-bg {
+  animation: heartBeat 2.2s infinite ease-in-out;
+}
+
+@keyframes longingHeartBeat {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.5));
+  }
+  20% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 26px rgba(168, 85, 247, 0.8));
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.longing-heart-bg {
+  animation: longingHeartBeat 2.4s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Glowing Ancient Parchment (Aşık Etme)
+   -------------------------------------------------------------------------- */
+@keyframes parchmentAura {
+  0%, 100% {
+    box-shadow: 
+      0 0 35px rgba(255, 190, 80, 0.45),
+      0 15px 40px rgba(0, 0, 0, 0.9),
+      inset 0 0 40px rgba(100, 60, 20, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 55px rgba(255, 220, 120, 0.75),
+      0 0 80px rgba(201, 158, 82, 0.4),
+      0 15px 40px rgba(0, 0, 0, 0.9),
+      inset 0 0 50px rgba(120, 70, 20, 0.35);
+  }
+}
+
+.parchment-scroll-container {
+  animation: parchmentAura 3s infinite alternate ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Match Striking Sparks & Glow
+   -------------------------------------------------------------------------- */
+@keyframes sparkBurst {
+  0% {
+    transform: scale(0.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.match-spark-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fffb8f;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #ff7b00;
+  pointer-events: none;
+  animation: sparkBurst 0.4s forwards ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Page Turn 3D Flip
+   -------------------------------------------------------------------------- */
+@keyframes pageTurnLeft {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(-90deg); }
+  100% { transform: rotateY(0deg); }
+}
+
+.grimoire-page-flip {
+  animation: pageTurnLeft 0.5s ease-in-out;
+}
